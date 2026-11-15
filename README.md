@@ -39,3 +39,15 @@ pip install -r requirements.txt
 copy .env.example .env          # then put your OpenAI key in .env
 python test_agent.py
 ```
+
+## Running the API
+
+```
+uvicorn backend.main:app --reload --port 8000
+```
+
+Then open http://localhost:8000/docs to try `/health` and `/chat`. `/chat` needs the
+`X-Access-Code` header to match `NEXAAI_ACCESS_CODE` in `.env`, and streams progress
+events (`start`, `tool_calls`, `tool_result`, `answer`, `done`, or `error`).
+
+Backend checks that need no OpenAI key: `python tests/test_backend.py`.

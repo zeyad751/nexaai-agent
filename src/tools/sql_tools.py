@@ -227,6 +227,10 @@ def run_sql_tool(query: str):
         columns = [d[0] for d in cursor.description] if cursor.description else []
         fetched = cursor.fetchmany(MAX_ROWS + 1)
     except sqlite3.Error as exc:
+        if "interrupted" in str(exc).lower():
+            return (f"SQL ERROR: the query ran longer than {TIMEOUT_SECONDS} seconds and was "
+                    "stopped. The query is too expensive (often a missing join condition), not "
+                    "wrong: simplify it, add join conditions or aggregate in fewer steps, then retry.")
         return (f"SQL ERROR: {exc}. Check table and column names against the schema in the "
                 "tool description, then fix the query and retry.")
     finally:
