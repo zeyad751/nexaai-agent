@@ -1,0 +1,22 @@
+# Secrets: never commit real credentials
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Frontend (added in Phase 3)
+node_modules/
+dist/
+
+# Editors and OS
+.vscode/
+.cursor/
+.idea/
+.DS_Store
+Thumbs.db

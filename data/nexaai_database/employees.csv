@@ -1,0 +1,101 @@
+employee_id,full_name,job_title,department_id,seniority,years_experience,location,skills,specialization,hire_date,manager_id,employment_status
+EMP-001,Amr Hassan,Director of AI Engineering,DEPT-01,Director,20,"Cairo, Egypt","Generative AI, Python, PyTorch, Model Deployment",Generative AI,2019-09-08,,Active
+EMP-002,Faisal Abdel Rahman,AI Engineer Lead,DEPT-01,Lead,10,"Cairo, Egypt","NLP, Model Deployment, Generative AI, PyTorch",PyTorch,2019-12-09,EMP-001,Active
+EMP-003,Ola El-Sayed,AI Engineer Lead,DEPT-01,Lead,11,"Cairo, Egypt","MLOps, Generative AI, LLM Fine-tuning, NLP",Generative AI,2021-10-13,EMP-001,Active
+EMP-004,Charlotte Haddad,Senior AI Engineer,DEPT-01,Senior,10,"London, UK","LLM Fine-tuning, Model Deployment, NLP, Computer Vision",Generative AI,2021-06-25,EMP-001,Active
+EMP-005,Ryan Al-Otaibi,Senior AI Engineer,DEPT-01,Senior,7,"Cairo, Egypt","Computer Vision, PyTorch, MLOps, NLP",Computer Vision,2020-05-22,EMP-001,Active
+EMP-006,Liam Aziz,Senior AI Engineer,DEPT-01,Senior,9,"Cairo, Egypt","Python, Generative AI, LLM Fine-tuning, MLOps",Generative AI,2022-01-17,EMP-001,Active
+EMP-007,Nadia Coleman,Senior AI Engineer,DEPT-01,Senior,7,"Dubai, UAE","Model Deployment, Python, PyTorch, LLM Fine-tuning",Computer Vision,2020-11-30,EMP-001,Active
+EMP-008,Dina Sabry,Senior AI Engineer,DEPT-01,Senior,6,"Dubai, UAE","Generative AI, LLM Fine-tuning, Model Deployment, MLOps",Computer Vision,2021-10-08,EMP-001,Active
+EMP-009,Rajesh Fouad,AI Engineer,DEPT-01,Mid,6,"Cairo, Egypt","Computer Vision, Python, Model Deployment, PyTorch",Model Deployment,2021-10-20,EMP-001,Active
+EMP-010,Faisal Al-Harbi,AI Engineer,DEPT-01,Mid,6,"Cairo, Egypt","MLOps, Model Deployment, Computer Vision, NLP",NLP,2023-01-12,EMP-001,Active
+EMP-011,Aya Naguib,AI Engineer,DEPT-01,Mid,4,"Dubai, UAE","PyTorch, Computer Vision, Model Deployment, LLM Fine-tuning",Model Deployment,2023-05-15,EMP-003,Departed
+EMP-012,Mona Rizk,AI Engineer,DEPT-01,Mid,3,"London, UK","Python, NLP, MLOps, Computer Vision",MLOps,2024-01-05,EMP-001,Active
+EMP-013,Rana Osei,AI Engineer,DEPT-01,Mid,4,Remote,"Model Deployment, PyTorch, Python, LLM Fine-tuning",Computer Vision,2023-11-06,EMP-002,Active
+EMP-014,Sherif Coleman,AI Engineer,DEPT-01,Mid,3,"Cairo, Egypt","NLP, LLM Fine-tuning, MLOps, Python",Computer Vision,2024-05-11,EMP-001,Active
+EMP-015,Tarek Khalil,Junior AI Engineer,DEPT-01,Junior,3,"London, UK","MLOps, Generative AI, Python, Computer Vision",MLOps,2024-09-22,EMP-003,Active
+EMP-016,Faisal Rashad,Junior AI Engineer,DEPT-01,Junior,3,"Riyadh, Saudi Arabia","PyTorch, Python, LLM Fine-tuning, MLOps",LLM Fine-tuning,2023-02-16,EMP-001,On Leave
+EMP-017,Layan Saleh,Junior AI Engineer,DEPT-01,Junior,1,"Cairo, Egypt","NLP, Model Deployment, PyTorch, Generative AI",Computer Vision,2023-04-06,EMP-001,Active
+EMP-018,Hassan Abdel Rahman,Junior AI Engineer,DEPT-01,Junior,2,"Dubai, UAE","Model Deployment, Python, Computer Vision, Generative AI",MLOps,2022-05-26,EMP-001,Active
+EMP-019,Mostafa Farouk,Director of Data & Analytics,DEPT-02,Director,22,"Cairo, Egypt","Databricks, SQL, Python, Statistical Modeling",Python,2021-01-15,,Active
+EMP-020,Ali Bishop,Data Scientist Lead,DEPT-02,Lead,11,"Cairo, Egypt","BI Dashboards, Python, SQL, Databricks",Databricks,2021-10-12,EMP-019,Active
+EMP-021,Salma El-Sayed,Data Scientist Lead,DEPT-02,Lead,10,"Cairo, Egypt","BI Dashboards, Databricks, Python, Snowflake",SQL,2020-09-27,EMP-019,Active
+EMP-022,Ahmed Qureshi,Senior Data Scientist,DEPT-02,Senior,8,"Cairo, Egypt","Snowflake, Databricks, Statistical Modeling, BI Dashboards",Python,2022-07-20,EMP-019,Active
+EMP-023,Sara Farouk,Senior Data Scientist,DEPT-02,Senior,10,"Cairo, Egypt","Data Engineering, SQL, Snowflake, BI Dashboards",Statistical Modeling,2023-01-15,EMP-019,On Leave
+EMP-024,Jana Gaber,Senior Data Scientist,DEPT-02,Senior,6,"Cairo, Egypt","Python, SQL, Statistical Modeling, Snowflake",Snowflake,2022-11-06,EMP-019,Active
+EMP-025,Priya Saleh,Senior Data Scientist,DEPT-02,Senior,10,"Dubai, UAE","SQL, Statistical Modeling, Databricks, BI Dashboards",Snowflake,2021-05-19,EMP-019,Active
+EMP-026,Hazem Al-Rashid,Data Scientist,DEPT-02,Mid,5,"Riyadh, Saudi Arabia","Data Engineering, Python, Databricks, BI Dashboards",Python,2022-02-23,EMP-019,Active
+EMP-027,Sameh Turner,Data Scientist,DEPT-02,Mid,5,"Cairo, Egypt","Statistical Modeling, Databricks, SQL, Snowflake",Statistical Modeling,2021-05-29,EMP-019,Active
+EMP-028,Rana Nabil,Data Scientist,DEPT-02,Mid,5,Remote,"Data Engineering, Databricks, Python, BI Dashboards",Databricks,2021-05-21,EMP-021,Active
+EMP-029,Sameh Farah,Data Scientist,DEPT-02,Mid,3,"Cairo, Egypt","Snowflake, SQL, Python, Data Engineering",SQL,2024-02-10,EMP-019,On Leave
+EMP-030,Aya Aziz,Data Scientist,DEPT-02,Mid,5,"Cairo, Egypt","Data Engineering, Python, Databricks, BI Dashboards",Data Engineering,2024-05-23,EMP-019,On Leave
+EMP-031,Karim Khalil,Junior Data Scientist,DEPT-02,Junior,3,"London, UK","SQL, Databricks, Data Engineering, Python",Snowflake,2024-05-17,EMP-019,Departed
+EMP-032,Sherif Bishop,Junior Data Scientist,DEPT-02,Junior,3,"Dubai, UAE","SQL, Databricks, Python, Snowflake",Databricks,2024-05-25,EMP-019,Active
+EMP-033,Adam Rizk,Director of Cloud & Infrastructure,DEPT-03,Director,19,"Cairo, Egypt","Networking, DevOps, Terraform, AWS",AWS,2020-11-13,,Active
+EMP-034,Sherif Shawky,Cloud Engineer Lead,DEPT-03,Lead,13,"Cairo, Egypt","Kubernetes, Terraform, AWS, Networking",AWS,2019-07-21,EMP-033,Active
+EMP-035,Heba Qureshi,Senior Cloud Engineer,DEPT-03,Senior,6,"Cairo, Egypt","Networking, Terraform, Kubernetes, DevOps",Networking,2022-08-21,EMP-033,Active
+EMP-036,Nesma Sabry,Senior Cloud Engineer,DEPT-03,Senior,6,"Dubai, UAE","Kubernetes, Azure, Networking, DevOps",CI/CD,2021-01-30,EMP-033,Active
+EMP-037,Ali Al-Sabah,Senior Cloud Engineer,DEPT-03,Senior,6,Remote,"Kubernetes, AWS, DevOps, Networking",Azure,2020-08-24,EMP-033,Active
+EMP-038,Noura Haddad,Senior Cloud Engineer,DEPT-03,Senior,8,"Riyadh, Saudi Arabia","DevOps, Azure, Terraform, AWS",Kubernetes,2022-06-12,EMP-033,Active
+EMP-039,Noura El-Sayed,Cloud Engineer,DEPT-03,Mid,4,"Dubai, UAE","CI/CD, Kubernetes, DevOps, Networking",CI/CD,2023-01-16,EMP-033,Active
+EMP-040,Sameh Osei,Cloud Engineer,DEPT-03,Mid,5,"Cairo, Egypt","CI/CD, Kubernetes, DevOps, AWS",AWS,2023-04-17,EMP-033,Active
+EMP-041,Liam Rizk,Cloud Engineer,DEPT-03,Mid,4,"Dubai, UAE","Terraform, DevOps, Azure, Kubernetes",Kubernetes,2024-06-14,EMP-033,Active
+EMP-042,Sophie Turner,Cloud Engineer,DEPT-03,Mid,6,"Riyadh, Saudi Arabia","DevOps, Terraform, AWS, Azure",Kubernetes,2023-06-25,EMP-033,Active
+EMP-043,Daniel Khalil,Junior Cloud Engineer,DEPT-03,Junior,1,"Cairo, Egypt","AWS, Networking, Azure, DevOps",AWS,2023-09-28,EMP-033,Departed
+EMP-044,Salma Turner,Junior Cloud Engineer,DEPT-03,Junior,2,"Cairo, Egypt","CI/CD, Terraform, Networking, DevOps",AWS,2025-03-24,EMP-034,Active
+EMP-045,Karim Baxter,Director of Strategy Consulting,DEPT-04,Director,19,"Cairo, Egypt","Digital Strategy, Stakeholder Management, Change Management, Market Analysis",Stakeholder Management,2021-05-18,,Active
+EMP-046,Karim Iyer,Strategy Consultant Lead,DEPT-04,Lead,14,Remote,"Stakeholder Management, Market Analysis, Digital Strategy, Business Case Development",Change Management,2021-11-30,EMP-045,Active
+EMP-047,Hazem Marsh,Senior Strategy Consultant,DEPT-04,Senior,7,"Dubai, UAE","Change Management, Digital Strategy, Stakeholder Management, Market Analysis",Change Management,2021-07-16,EMP-045,On Leave
+EMP-048,Tarek Nabil,Senior Strategy Consultant,DEPT-04,Senior,7,"Dubai, UAE","Digital Strategy, Market Analysis, Business Case Development, Stakeholder Management",Stakeholder Management,2021-04-18,EMP-045,Active
+EMP-049,Hind Mehta,Senior Strategy Consultant,DEPT-04,Senior,6,"London, UK","Stakeholder Management, Business Case Development, Change Management, Digital Strategy",Stakeholder Management,2021-02-27,EMP-045,Active
+EMP-050,Charlotte Al-Farsi,Strategy Consultant,DEPT-04,Mid,6,"Dubai, UAE","Market Analysis, Digital Strategy, Stakeholder Management, Business Case Development",Change Management,2023-05-09,EMP-046,Active
+EMP-051,Laila Qureshi,Strategy Consultant,DEPT-04,Mid,5,"Riyadh, Saudi Arabia","Stakeholder Management, Digital Strategy, Change Management, Business Case Development",Stakeholder Management,2023-04-09,EMP-045,Active
+EMP-052,Laila Khalil,Strategy Consultant,DEPT-04,Mid,6,Remote,"Digital Strategy, Business Case Development, Market Analysis, Change Management",Change Management,2021-10-05,EMP-045,Active
+EMP-053,Sophie Al-Sabah,Strategy Consultant,DEPT-04,Mid,6,"London, UK","Stakeholder Management, Change Management, Business Case Development, Digital Strategy",Business Case Development,2022-07-24,EMP-046,Active
+EMP-054,Karim Haddad,Junior Strategy Consultant,DEPT-04,Junior,1,"London, UK","Business Case Development, Market Analysis, Stakeholder Management, Change Management",Business Case Development,2022-05-21,EMP-045,Active
+EMP-055,Nadia Zaidan,Director of Product,DEPT-05,Director,17,"London, UK","Agile, Product Roadmapping, Prioritization, Stakeholder Management",Agile,2021-03-07,,Active
+EMP-056,Liam Sharma,Product Manager Lead,DEPT-05,Lead,15,"Cairo, Egypt","UX Research, Product Roadmapping, Agile, Prioritization",Prioritization,2020-07-11,EMP-055,Active
+EMP-057,Nour Haddad,Senior Product Manager,DEPT-05,Senior,10,"Riyadh, Saudi Arabia","Product Roadmapping, Agile, Prioritization, UX Research",Stakeholder Management,2022-05-27,EMP-055,Active
+EMP-058,Ryan Naguib,Senior Product Manager,DEPT-05,Senior,9,"Dubai, UAE","Prioritization, Agile, Stakeholder Management, UX Research",Stakeholder Management,2020-11-09,EMP-055,Active
+EMP-059,Bassel Al-Rashid,Product Manager,DEPT-05,Mid,4,"Cairo, Egypt","Stakeholder Management, UX Research, Prioritization, Agile",Agile,2021-06-27,EMP-055,Active
+EMP-060,Sophie Shawky,Product Manager,DEPT-05,Mid,6,"Dubai, UAE","Agile, Prioritization, UX Research, Stakeholder Management",Prioritization,2022-03-11,EMP-056,Active
+EMP-061,Bilal Baxter,Director of Project Management,DEPT-06,Director,19,"Dubai, UAE","Scrum, Stakeholder Communication, PMP, Agile Delivery",Agile Delivery,2020-12-08,,Active
+EMP-062,Hanan Sabry,Project Manager Lead,DEPT-06,Lead,13,"Cairo, Egypt","PMP, Budget Management, Stakeholder Communication, Scrum",PMP,2020-10-11,EMP-061,Active
+EMP-063,Daniel Haddad,Senior Project Manager,DEPT-06,Senior,9,"Cairo, Egypt","Risk Management, Agile Delivery, Scrum, Stakeholder Communication",Agile Delivery,2021-07-08,EMP-061,Active
+EMP-064,Reem Ezzat,Senior Project Manager,DEPT-06,Senior,7,"Cairo, Egypt","PMP, Scrum, Budget Management, Agile Delivery",Risk Management,2022-09-18,EMP-061,Active
+EMP-065,Ryan Shawky,Senior Project Manager,DEPT-06,Senior,8,"Riyadh, Saudi Arabia","Risk Management, Budget Management, Agile Delivery, Stakeholder Communication",PMP,2020-01-29,EMP-061,Active
+EMP-066,Khaled Naguib,Senior Project Manager,DEPT-06,Senior,9,Remote,"PMP, Budget Management, Stakeholder Communication, Risk Management",Stakeholder Communication,2020-07-29,EMP-061,Active
+EMP-067,Karim Youssef,Project Manager,DEPT-06,Mid,6,"London, UK","Stakeholder Communication, Scrum, Agile Delivery, Budget Management",Scrum,2021-08-22,EMP-061,Active
+EMP-068,Aya Fahmy,Project Manager,DEPT-06,Mid,5,Remote,"Agile Delivery, PMP, Stakeholder Communication, Budget Management",PMP,2021-06-24,EMP-061,Active
+EMP-069,Hady Adeyemi,Project Manager,DEPT-06,Mid,6,Remote,"Budget Management, PMP, Stakeholder Communication, Risk Management",PMP,2023-07-12,EMP-061,Active
+EMP-070,Mostafa Rashad,Project Manager,DEPT-06,Mid,4,"Riyadh, Saudi Arabia","Risk Management, Scrum, PMP, Budget Management",Agile Delivery,2022-06-26,EMP-062,Active
+EMP-071,Arjun Bishop,Junior Project Manager,DEPT-06,Junior,3,"Dubai, UAE","Agile Delivery, Risk Management, Budget Management, Stakeholder Communication",Budget Management,2025-05-01,EMP-061,Active
+EMP-072,Sultan Mansour,Junior Project Manager,DEPT-06,Junior,3,Remote,"Scrum, PMP, Risk Management, Stakeholder Communication",Agile Delivery,2023-04-24,EMP-061,Active
+EMP-073,Waleed Bishop,Director of Finance,DEPT-07,Director,17,"Riyadh, Saudi Arabia","Financial Reporting, Forecasting, Excel Modeling, Contract Finance",Financial Reporting,2020-04-24,,Active
+EMP-074,Tarek Zaidan,Financial Analyst Lead,DEPT-07,Lead,10,"Riyadh, Saudi Arabia","Excel Modeling, Forecasting, Budgeting, Financial Reporting",Contract Finance,2021-11-01,EMP-073,Departed
+EMP-075,Youssef Rizk,Senior Financial Analyst,DEPT-07,Senior,8,"Cairo, Egypt","Contract Finance, Financial Reporting, Forecasting, Excel Modeling",Forecasting,2023-03-26,EMP-073,Active
+EMP-076,Noura Naguib,Senior Financial Analyst,DEPT-07,Senior,9,"Dubai, UAE","Financial Reporting, Forecasting, Contract Finance, Budgeting",Contract Finance,2020-07-05,EMP-073,Active
+EMP-077,Maya Al-Mansoori,Financial Analyst,DEPT-07,Mid,6,"Cairo, Egypt","Budgeting, Forecasting, Contract Finance, Financial Reporting",Budgeting,2024-02-01,EMP-073,Departed
+EMP-078,Priya Osei,Financial Analyst,DEPT-07,Mid,3,"Dubai, UAE","Budgeting, Contract Finance, Forecasting, Financial Reporting",Excel Modeling,2024-01-17,EMP-073,Active
+EMP-079,Adam Aziz,Director of Sales,DEPT-08,Director,24,Remote,"Upselling, CRM Tools, Client Relationship Management, Negotiation",CRM Tools,2019-05-15,,Active
+EMP-080,Wael Selim,Account Manager Lead,DEPT-08,Lead,11,"Dubai, UAE","CRM Tools, Upselling, Client Relationship Management, Negotiation",Client Relationship Management,2021-02-26,EMP-079,Active
+EMP-081,Yasmine Fouad,Senior Account Manager,DEPT-08,Senior,7,Remote,"Negotiation, CRM Tools, Business Development, Upselling",Upselling,2022-10-17,EMP-079,Active
+EMP-082,Mahmoud Qureshi,Senior Account Manager,DEPT-08,Senior,7,"Riyadh, Saudi Arabia","Business Development, Client Relationship Management, CRM Tools, Negotiation",Negotiation,2022-11-06,EMP-079,On Leave
+EMP-083,Karim Aziz,Account Manager,DEPT-08,Mid,3,"Riyadh, Saudi Arabia","CRM Tools, Upselling, Client Relationship Management, Business Development",CRM Tools,2022-08-03,EMP-079,Active
+EMP-084,Daniel Baxter,Account Manager,DEPT-08,Mid,6,Remote,"Business Development, CRM Tools, Negotiation, Upselling",Business Development,2023-07-22,EMP-079,Active
+EMP-085,Arjun Abdel Rahman,Account Manager,DEPT-08,Mid,5,"Riyadh, Saudi Arabia","Upselling, CRM Tools, Negotiation, Client Relationship Management",Upselling,2023-08-27,EMP-080,Departed
+EMP-086,Khaled Osei,Junior Account Manager,DEPT-08,Junior,3,Remote,"Upselling, Client Relationship Management, Negotiation, Business Development",Client Relationship Management,2023-11-11,EMP-079,Active
+EMP-087,Rana Al-Sabah,Director of Cybersecurity,DEPT-09,Director,22,"Cairo, Egypt","Security Architecture, Penetration Testing, Compliance, Data Governance",Data Governance,2020-10-27,,Active
+EMP-088,Omar Farah,Security Engineer Lead,DEPT-09,Lead,10,"Riyadh, Saudi Arabia","Security Architecture, Compliance, Data Governance, Risk Assessment",Penetration Testing,2020-09-23,EMP-087,Departed
+EMP-089,Mostafa Bishop,Senior Security Engineer,DEPT-09,Senior,7,Remote,"Risk Assessment, Security Architecture, Data Governance, Compliance",Security Architecture,2021-09-05,EMP-087,Active
+EMP-090,Mahmoud Tawfik,Senior Security Engineer,DEPT-09,Senior,10,"Dubai, UAE","Compliance, Data Governance, Risk Assessment, Security Architecture",Data Governance,2022-04-23,EMP-087,Active
+EMP-091,Wael Marsh,Security Engineer,DEPT-09,Mid,4,"Dubai, UAE","Security Architecture, Penetration Testing, Compliance, Risk Assessment",Penetration Testing,2022-04-21,EMP-087,On Leave
+EMP-092,Salma Gaber,Security Engineer,DEPT-09,Mid,3,Remote,"Data Governance, Security Architecture, Penetration Testing, Compliance",Security Architecture,2023-06-24,EMP-088,Active
+EMP-093,Sameh Ezzat,Junior Security Engineer,DEPT-09,Junior,2,"Cairo, Egypt","Penetration Testing, Security Architecture, Data Governance, Compliance",Security Architecture,2024-09-16,EMP-087,Active
+EMP-094,Karim Zaidan,Director of Research & Innovation,DEPT-10,Director,23,Remote,"Emerging Tech Evaluation, Prototyping, Experimentation, Technical Writing",Prototyping,2021-05-02,,Active
+EMP-095,Ziad Farah,Research Scientist Lead,DEPT-10,Lead,12,"Riyadh, Saudi Arabia","Applied Research, Emerging Tech Evaluation, Prototyping, Experimentation",Experimentation,2020-03-07,EMP-094,Active
+EMP-096,Khaled Khalil,Senior Research Scientist,DEPT-10,Senior,8,"Riyadh, Saudi Arabia","Prototyping, Experimentation, Applied Research, Technical Writing",Experimentation,2021-10-31,EMP-094,Active
+EMP-097,Bassel Gaber,Senior Research Scientist,DEPT-10,Senior,8,Remote,"Emerging Tech Evaluation, Experimentation, Applied Research, Prototyping",Applied Research,2022-09-13,EMP-094,Active
+EMP-098,Hady Rizk,Research Scientist,DEPT-10,Mid,6,"Dubai, UAE","Technical Writing, Applied Research, Prototyping, Experimentation",Technical Writing,2024-02-16,EMP-095,Active
+EMP-099,Rana Al-Harbi,Research Scientist,DEPT-10,Mid,6,"Cairo, Egypt","Prototyping, Technical Writing, Applied Research, Experimentation",Experimentation,2023-01-31,EMP-094,Active
+EMP-100,Hassan Naguib,Junior Research Scientist,DEPT-10,Junior,2,"Riyadh, Saudi Arabia","Applied Research, Prototyping, Experimentation, Emerging Tech Evaluation",Emerging Tech Evaluation,2023-09-11,EMP-095,Departed

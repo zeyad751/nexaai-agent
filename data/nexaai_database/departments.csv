@@ -1,0 +1,11 @@
+department_id,department_name,department_description,department_head
+DEPT-01,AI Engineering,"Designs, builds, and deploys machine learning and generative AI systems for client projects, including model development, MLOps, and production integration.",EMP-001
+DEPT-02,Data & Analytics,"Owns data architecture, data engineering pipelines, and business intelligence/analytics deliverables across client engagements.",EMP-019
+DEPT-03,Cloud & Infrastructure,"Handles cloud migration, infrastructure design, DevOps, and platform reliability for client environments.",EMP-033
+DEPT-04,Strategy Consulting,"Leads business case development, digital transformation roadmaps, and executive advisory work.",EMP-045
+DEPT-05,Product,"Owns internal and client-facing product design, UX research, and product management for delivered solutions.",EMP-055
+DEPT-06,Project Management,"Provides project managers and delivery leads responsible for scope, schedule, budget, and stakeholder management across engagements.",EMP-061
+DEPT-07,Finance,"Manages contract finance, budgeting, invoicing, and financial reporting for client engagements and internal operations.",EMP-073
+DEPT-08,Sales,"Manages client acquisition, account management, and commercial relationships including contract renewals and upsells.",EMP-079
+DEPT-09,Cybersecurity,"Provides security architecture, risk assessments, and compliance support for client AI and data platforms.",EMP-087
+DEPT-10,Research & Innovation,"Explores emerging technologies, builds internal accelerators and reusable frameworks, and supports proof-of-concept work ahead of client delivery.",EMP-094
