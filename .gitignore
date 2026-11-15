@@ -20,3 +20,10 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local scratch files, kept on disk but not published
+2.py
+.ipynb
+
+# Local live-validation output
+validation_results/

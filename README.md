@@ -51,3 +51,30 @@ Then open http://localhost:8000/docs to try `/health` and `/chat`. `/chat` needs
 events (`start`, `tool_calls`, `tool_result`, `answer`, `done`, or `error`).
 
 Backend checks that need no OpenAI key: `python tests/test_backend.py`.
+
+## Limits and cost protection
+
+The API applies these limits, all adjustable through environment variables:
+
+| Limit | Default | Variable |
+|---|---|---|
+| Agent steps per answer | 40 | `AGENT_RECURSION_LIMIT` |
+| Time per answer | 240 s | `AGENT_TIMEOUT_SECONDS` |
+| Agent runs at the same time | 3 | `MAX_CONCURRENT_RUNS` |
+| Questions per visitor | 10 per 10 min | `RATE_LIMIT_CHATS`, `RATE_LIMIT_WINDOW_SECONDS` |
+| Wrong access codes before lockout | 5 per 10 min | `RATE_LIMIT_FAILED_CODES` |
+| Questions per server process per day | 200 | `DAILY_CHAT_LIMIT` |
+
+These counters live in the server's memory. They reset whenever the server restarts, which
+on Render's free tier includes waking from sleep, so the daily limit slows abuse but is
+**not** a guaranteed daily cost ceiling. The real ceiling is the spending limit set in the
+OpenAI account. A request that hits the time limit keeps its concurrency slot until the
+agent actually stops at its next step, so timeouts cannot exceed the concurrency limit.
+
+## Deployment
+
+`render.yaml` defines the Render web service: Python 3.11.9 (pinned, because Render's
+default is newer), `/health` as the health-check path, and the three secrets
+(`OPENAI_API_KEY`, `NEXAAI_ACCESS_CODE`, `ALLOWED_ORIGINS`) entered in Render's dashboard,
+never stored in the repository. `/health` returns 503 when the two data sources disagree,
+so Render will not route traffic to a deploy with inconsistent data.

@@ -1,0 +1,22 @@
+# Render Blueprint for the NexaAI-Agent API (FastAPI + the existing LangGraph agent).
+# Secrets use sync: false, so Render asks for their values in its dashboard; they are
+# never stored in this file or in the repository.
+services:
+  - type: web
+    name: nexaai-agent-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    # Returns 503 if the SQLite file and the CSVs disagree, so a broken deploy never
+    # receives traffic (Render keeps serving the previous version).
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEXAAI_ACCESS_CODE
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false

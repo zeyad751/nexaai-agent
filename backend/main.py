@@ -25,7 +25,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 from langgraph.errors import GraphRecursionError
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from backend.config import settings
 from scripts.check_data_consistency import check as check_data_consistency
@@ -80,18 +80,38 @@ async def _invalid_request(request: Request, exc: RequestValidationError):
 # ---------------------------------------------------------------------------
 # Request models
 # ---------------------------------------------------------------------------
+# The client controls everything in these models, so they accept only plain conversation
+# text. "system" and "tool" roles, tool calls, tool results and any extra field are
+# rejected (extra="forbid"), and assistant turns are rebuilt server-side as plain
+# AIMessage(text) with no tool calls. strict=True stops numbers or lists being coerced
+# into strings.
 class HistoryItem(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
     role: Literal["user", "assistant"]
-    content: str = Field(min_length=1)
+    content: str = Field(min_length=1, max_length=50_000)
 
 
 class ChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
     message: str = Field(min_length=1, max_length=settings.max_message_chars)
     history: list[HistoryItem] = Field(default_factory=list, max_length=200)
 
+    @field_validator("message")
+    @classmethod
+    def _not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("message is blank")
+        return value
+
 
 # ---------------------------------------------------------------------------
-# Rate limiting (in memory: fine for one server instance; resets on restart)
+# Rate limiting.
+# All counters live in this process's memory: they apply to one server instance and
+# reset whenever it restarts (on Render's free tier, also after it sleeps). The daily
+# counter is therefore a per-process brake, NOT a guaranteed daily cost ceiling; the
+# real spending cap must be set in the OpenAI account.
 # ---------------------------------------------------------------------------
 class SlidingWindowLimiter:
     def __init__(self, limit: int, window_seconds: int):
@@ -226,7 +246,7 @@ def chat(req: ChatRequest, request: Request, x_access_code: str = Header(default
                      f"Limit of {settings.chats_per_window} questions per "
                      f"{settings.rate_window_seconds // 60} minutes reached. Please wait.")
     if not _take_daily_slot():
-        raise _error(429, "daily_limit", "The demo's daily question limit has been reached. Try tomorrow.")
+        raise _error(429, "daily_limit", "The demo's question limit for today has been reached. Try later.")
 
     messages = _build_messages(req)
     return StreamingResponse(
@@ -243,7 +263,10 @@ def _run_agent_stream(messages: list):
     progress, and stop waiting once the time limit is reached.
     """
     # The concurrency slot is taken here, inside the stream, so it can never leak if the
-    # client disconnects before the stream starts. The worker releases it when done.
+    # client disconnects before the stream starts. Only the worker thread releases it,
+    # when the agent has really stopped. A request that times out (or whose client
+    # disconnects) therefore keeps its slot until its agent run ends, so repeated
+    # timeouts cannot pile up more than max_concurrent_runs agents.
     if not _run_slots.acquire(blocking=False):
         yield _sse("error", {"code": "busy",
                              "message": "The agent is busy with other questions. Try again in a minute."})

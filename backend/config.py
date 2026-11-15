@@ -44,7 +44,9 @@ class Settings:
     run_timeout_seconds: int = field(default_factory=lambda: _int("AGENT_TIMEOUT_SECONDS", 240))
     max_concurrent_runs: int = field(default_factory=lambda: _int("MAX_CONCURRENT_RUNS", 3))
 
-    # Abuse and cost limits
+    # Abuse and cost limits. These counters are kept in memory and reset when the server
+    # restarts or (on Render's free tier) wakes from sleep, so daily_chat_limit slows
+    # abuse but is not a guaranteed daily ceiling. Set the real spending cap in OpenAI.
     chats_per_window: int = field(default_factory=lambda: _int("RATE_LIMIT_CHATS", 10))
     rate_window_seconds: int = field(default_factory=lambda: _int("RATE_LIMIT_WINDOW_SECONDS", 600))
     failed_codes_per_window: int = field(default_factory=lambda: _int("RATE_LIMIT_FAILED_CODES", 5))
