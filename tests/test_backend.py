@@ -157,3 +157,14 @@ with TestClient(m.app) as c:
 m.check_data_consistency = real_check
 
 print(f"\n{sum(results)}/{len(results)} checks passed in total")
+
+# OpenAI 429s: a spend limit must not be reported as "try again shortly".
+import httpx, openai as _oa
+def _rate_error(code):
+    req = httpx.Request("POST", "https://api.openai.com/v1/chat/completions")
+    resp = httpx.Response(429, request=req, json={"error": {"message": "limit", "code": code}})
+    return _oa.RateLimitError("limit", response=resp, body={"message": "limit", "code": code})
+check("spend limit -> budget_exhausted", m._friendly(_rate_error("project_spend_limit_exceeded"))[0] == "budget_exhausted")
+check("no credit left -> budget_exhausted", m._friendly(_rate_error("insufficient_quota"))[0] == "budget_exhausted")
+check("ordinary rate limit -> ai_busy", m._friendly(_rate_error("rate_limit_exceeded"))[0] == "ai_busy")
+print(f"\n{sum(results)}/{len(results)} checks passed in total (with OpenAI error mapping)")

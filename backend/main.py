@@ -214,6 +214,12 @@ def _friendly(exc: Exception) -> tuple[str, str]:
     if isinstance(exc, openai.AuthenticationError):
         return ("server_config", "The server's AI credentials are not valid. Please contact the owner.")
     if isinstance(exc, openai.RateLimitError):
+        # A spend limit or exhausted credit also arrives as HTTP 429, but retrying will not
+        # help until the limit is raised or the month resets, so say so plainly.
+        detail = f"{getattr(exc, 'code', '') or ''} {exc}".lower()
+        if any(k in detail for k in ("spend_limit_exceeded", "insufficient_quota")):
+            return ("budget_exhausted",
+                    "This demo has used its AI budget for the month, so it cannot answer right now.")
         return ("ai_busy", "The AI provider is rate-limiting requests right now. Please try again shortly.")
     if isinstance(exc, (openai.APITimeoutError, openai.APIConnectionError)):
         return ("ai_unreachable", "The AI provider could not be reached. Please try again.")
