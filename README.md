@@ -20,13 +20,23 @@ The two structured data sources must stay identical. Check them with
 
 ## Evaluation
 
+Results were graded by hand against the dataset; the samples are small and synthetic.
+
+**gpt-5.6-sol (the model the agent was developed and evaluated with):**
+
 - **Question bank:** 40 questions in eight categories (retrieval, multi-table,
   cross-entity, analytical, comparative, investigative, strategic, agentic).
 - **Graded first runs:** 21 questions, 20 passed (about 95%). Every figure in the answered
   questions matched the database; the one failure was a non-attempt, fixed on rerun.
 - **Latest batch:** 8 questions, all passed (2 with flags).
+- In a later live run through the API, Q23 failed: the same question can be answered
+  differently on different runs.
 
-Results were graded by hand against the dataset; the sample is small and synthetic.
+**gpt-6.1-sol (the deployed model):** one live validation run through the API, covering
+the five heaviest questions (Q23, Q25, Q36, Q37, Q38) and three simultaneous document
+questions. All 8 passed, with every figure matching the database. It was slower (heaviest
+answer 128 s versus 90 s) and cost about $0.07 per question on average. One run is
+evidence, not proof of consistency.
 
 ## Setup
 
@@ -52,6 +62,15 @@ events (`start`, `tool_calls`, `tool_result`, `answer`, `done`, or `error`).
 
 Backend checks that need no OpenAI key: `python tests/test_backend.py`.
 
+## Model
+
+The code default is `gpt-5.6-sol`, the evaluated model; the deployment (`render.yaml`)
+uses `gpt-6.1-sol` with `NEXAAI_USE_RESPONSES_API=true`, because its tool calling needs
+OpenAI's Responses API. Any model can be set through `NEXAAI_MODEL` without code changes,
+and `/health` reports the model in use. The agent's original `temperature=0` never reached
+`gpt-5.6-sol`, because LangChain drops non-default temperatures for gpt-5 models, so
+answers can vary between runs.
+
 ## Limits and cost protection
 
 The API applies these limits, all adjustable through environment variables:
@@ -63,12 +82,13 @@ The API applies these limits, all adjustable through environment variables:
 | Agent runs at the same time | 3 | `MAX_CONCURRENT_RUNS` |
 | Questions per visitor | 10 per 10 min | `RATE_LIMIT_CHATS`, `RATE_LIMIT_WINDOW_SECONDS` |
 | Wrong access codes before lockout | 5 per 10 min | `RATE_LIMIT_FAILED_CODES` |
-| Questions per server process per day | 200 | `DAILY_CHAT_LIMIT` |
+| Questions per server process per day | 200 (30 on Render) | `DAILY_CHAT_LIMIT` |
 
 These counters live in the server's memory. They reset whenever the server restarts, which
 on Render's free tier includes waking from sleep, so the daily limit slows abuse but is
-**not** a guaranteed daily cost ceiling. The real ceiling is the spending limit set in the
-OpenAI account. A request that hits the time limit keeps its concurrency slot until the
+**not** a guaranteed daily cost ceiling. The real ceiling is on the OpenAI side: the
+deployed key belongs to a separate project with a small prepaid balance that is not
+auto-recharged, so requests stop when it runs out and the app says so. A request that hits the time limit keeps its concurrency slot until the
 agent actually stops at its next step, so timeouts cannot exceed the concurrency limit.
 
 ## Deployment

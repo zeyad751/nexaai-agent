@@ -1,4 +1,6 @@
+import os
 
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage
 from langgraph.graph import StateGraph, MessagesState, START
@@ -182,7 +184,27 @@ STRATEGIC AND RECOMMENDATION QUESTIONS (rules 24-31):
 """
 
 
-llm = ChatOpenAI(model="gpt-5.6-sol", temperature=0)
+load_dotenv()
+
+# The model is configuration, not code: switch it with environment variables (in .env
+# locally, in the Render dashboard when deployed) without editing this file.
+#   NEXAAI_MODEL              model name; default gpt-5.6-sol, the model the agent was
+#                             evaluated with
+#   NEXAAI_USE_RESPONSES_API  "true" for models whose tool calling needs OpenAI's
+#                             Responses API instead of Chat Completions
+#   NEXAAI_TEMPERATURE        unset by default (the model's own default). Note: the
+#                             original temperature=0 never reached gpt-5.6-sol, because
+#                             LangChain drops non-default temperatures for gpt-5 models;
+#                             the evaluation therefore ran at the model's default too.
+MODEL_NAME = os.getenv("NEXAAI_MODEL", "gpt-5.6-sol")
+USE_RESPONSES_API = os.getenv("NEXAAI_USE_RESPONSES_API", "false").strip().lower() == "true"
+_temperature = os.getenv("NEXAAI_TEMPERATURE", "none").strip().lower()
+
+_llm_options = {"model": MODEL_NAME, "use_responses_api": USE_RESPONSES_API}
+if _temperature != "none":
+    _llm_options["temperature"] = float(_temperature)
+
+llm = ChatOpenAI(**_llm_options)
 
 llm_with_tools = llm.bind_tools(tools)
 

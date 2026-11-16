@@ -29,7 +29,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from backend.config import settings
 from scripts.check_data_consistency import check as check_data_consistency
-from src.agent import graph, tools
+from src.agent import MODEL_NAME, graph, tools
 
 log = logging.getLogger("nexaai.api")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -48,7 +48,8 @@ async def lifespan(app: FastAPI):
         log.error("NEXAAI_ACCESS_CODE is not set: /chat will refuse every request.")
     if not settings.openai_key_present:
         log.error("OPENAI_API_KEY is not set: the agent cannot run.")
-    log.info("Agent loaded with %d tools; data consistent: %s", len(tools), not problems)
+    log.info("Agent loaded with %d tools, model %s; data consistent: %s",
+             len(tools), MODEL_NAME, not problems)
     yield
 
 
@@ -232,7 +233,8 @@ def _friendly(exc: Exception) -> tuple[str, str]:
 @app.get("/health")
 def health(request: Request):
     ok = bool(getattr(request.app.state, "data_consistent", False))
-    body = {"status": "ok" if ok else "degraded", "data_consistent": ok, "agent_tools": len(tools)}
+    body = {"status": "ok" if ok else "degraded", "data_consistent": ok,
+            "agent_tools": len(tools), "model": MODEL_NAME}
     return JSONResponse(status_code=200 if ok else 503, content=body)
 
 

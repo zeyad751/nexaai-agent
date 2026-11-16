@@ -14,6 +14,15 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
+      # Model chosen after the live validation run (see README). Not secret.
+      - key: NEXAAI_MODEL
+        value: gpt-6.1-sol
+      - key: NEXAAI_USE_RESPONSES_API
+        value: "true"
+      # Public demo brake: about $2/day at the measured ~$0.07 per question. The hard
+      # cost ceiling is the prepaid OpenAI balance, which is not auto-recharged.
+      - key: DAILY_CHAT_LIMIT
+        value: "30"
       - key: OPENAI_API_KEY
         sync: false
       - key: NEXAAI_ACCESS_CODE
