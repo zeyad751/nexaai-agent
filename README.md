@@ -1,122 +1,86 @@
 # NexaAI-Agent
 
-A LangGraph agent that answers business-intelligence questions about NexaAI Solutions, a
-synthetic AI consultancy (40 projects, 20 clients, 100 employees, 60 risks, KPIs, milestones,
-decisions and 150 narrative documents).
+An AI business-intelligence assistant for NexaAI Solutions, a fictional AI consultancy. It
+answers questions about the company's projects, clients, employees, risks and strategies by
+combining a structured database with the company's project documents, and it shows the
+evidence behind every answer.
 
-**Live demo:** [nexaai-agent.vercel.app](https://nexaai-agent.vercel.app/) (access by invitation:
-the site asks for an access code). The backend runs on Render's free plan, so the first
-question after a quiet period can take about a minute while the server wakes up.
+**Live demo:** [nexaai-agent.vercel.app](https://nexaai-agent.vercel.app/), access by
+invitation (the site asks for an access code). The first question after a quiet period can
+take about a minute while the server wakes up.
+
+## What it can do
+
+- **Look things up:** "Who is the project manager for PRJ-024?"
+- **Calculate across the portfolio:** "Which risk category occurs most often, and what
+  share of those risks were realized?"
+- **Investigate what happened:** "What caused the schedule delay on PRJ-003?"
+- **Compare and recommend:** "Should NexaAI keep offering Data-First Transformation, and
+  under what conditions?"
+
+While it works, the app shows each source the agent checks (database records, SQL analysis
+or project documents), so every answer can be traced back to its evidence. Conversations
+are kept in the browser, and follow-up questions use the recent conversation as context.
 
 ## How it works
 
-The agent loops between an LLM step and a tool step until it can answer:
+1. **Web app (React):** the chat interface, with the live evidence trail and conversation
+   history.
+2. **API (FastAPI):** checks the access code and usage limits, runs the agent and streams
+   its progress back to the app.
+3. **Agent (LangGraph + OpenAI `gpt-6.1-sol`):** decides which tools a question needs, runs
+   them, reads the results and repeats until it can answer, following 31 rules on accuracy,
+   evidence and honest reporting.
+4. **Tools (15):**
+   - **13 database tools** for precise lookups: projects, teams, KPIs, risks, milestones,
+     decisions, clients, employees, technologies and strategies.
+   - **SQL analysis** for portfolio-wide calculations, read-only.
+   - **Document search (RAG)** over 150 project documents (proposals, meeting notes,
+     postmortems, executive reviews) for the "why" behind the numbers.
 
-- **LLM:** OpenAI `gpt-6.1-sol` through the Responses API, with a 31-rule system prompt
-  (`src/agent.py`).
-- **13 database tools:** fixed, parameterized queries on `data/nexaai.sqlite`.
-- **`run_sql_tool`:** read-only analytical SQL on the same `data/nexaai.sqlite`. Each query
-  runs on a private in-memory copy of the database, so it can never change the data file
-  (SELECT/WITH only, 5-second timeout, 200-row cap).
-- **`search_documents_tool`:** semantic search over the 150 documents in a Chroma index
-  (`data/vector_db`), embedded with OpenAI `text-embedding-3-small`.
+## The data
 
-### Data
-
-`data/nexaai.sqlite` is the single source of structured data: 12 tables covering projects,
-clients, employees, departments, project teams, KPIs, risks, milestones, decisions,
-strategies and technologies. Every database tool and the SQL tool read this one file, so
-they always see the same data. To change the data, edit this file; the SQL tool picks up the
-change automatically.
+A synthetic dataset built for this project: 40 projects (2022–2025), 20 clients, 100
+employees, 60 risks, quarterly KPIs, milestones and decisions, stored in a single SQLite
+database, plus 150 narrative documents. The data contains deliberate patterns (for example,
+strategies that succeed only under specific conditions) and realistic imperfections, such
+as records that conflict with documents, to test whether the agent finds and reports them.
 
 ## Evaluation
 
-All results below are for `gpt-6.1-sol`, run through the API. Each answer was checked
-against the database and the project documents by an AI reviewer (Claude), with every
-figure recomputed independently.
+The agent was tested on 38 questions across eight categories: retrieval, multi-table,
+cross-entity, analytical, comparative, investigative, strategic and agentic.
 
-- **Question bank:** 40 questions in eight categories (retrieval, multi-table,
-  cross-entity, analytical, comparative, investigative, strategic, agentic). 38 were run;
-  two comparative questions (Q21, Q22) were left out of the evaluation.
-- **Result:** all 38 passed, plus a false-premise test ("Why did PRJ-014 fail?"), which the
-  agent correctly rejected with evidence: **39 of 39**. Every figure checked matched the
-  database, apart from a few that differed by 0.1 through rounding. A few answers carried minor flags (for example, a repeated search,
-  or an average that included a cancelled project without calling it out).
-- **Concurrency:** four simultaneous questions; the limit of three agent runs held, and no
-  answer used another request's data.
-- **Cost and speed:** about $0.07 per question on average; the heaviest analytical answers
-  take about two minutes.
+- **39 of 39 passed:** the 38 questions plus a false-premise test ("Why did PRJ-014
+  fail?"), which the agent correctly rejected with evidence.
+- **Accuracy:** every figure checked matched the database, apart from a few 0.1 rounding
+  differences. Each answer was checked against the database and documents by an AI
+  reviewer (Claude), with figures recomputed independently.
+- **Concurrency:** simultaneous questions stayed fully separate.
+- **Cost and speed:** about $0.07 per question; the heaviest analytical answers take about
+  two minutes.
 
-Limits of this evaluation: each question was run once, and the model's answers can vary
-between runs, so a pass shows the agent can answer correctly, not that it always will. The
-data is synthetic and small.
+Each question was run once, and answers can vary between runs, so a pass shows the agent
+can answer correctly, not that it always will.
 
-## Run it locally
+## Safeguards
 
-The easiest way to try NexaAI-Agent is the live demo above. To run it yourself, you need
-Python 3.11, Node.js 20 or newer, and your own OpenAI API key.
+- **Access code** checked by the server; it never appears in the website's code.
+- **Read-only data:** the agent cannot change the database.
+- **Usage limits:** per-visitor and daily question limits, a time limit per answer, and a
+  cap on simultaneous questions.
+- **Cost cap:** the AI usage runs on a small prepaid budget that is not topped up
+  automatically. When it is used up, the app says so instead of answering.
 
-1. **Backend**
+## Limitations
 
-   ```
-   python -m venv .venv
-   .venv\Scripts\activate            # macOS/Linux: source .venv/bin/activate
-   pip install -r requirements.txt
-   copy .env.example .env            # macOS/Linux: cp .env.example .env
-   ```
+- The same question can be answered differently on different runs.
+- The demo runs on free hosting, so the first visit after a quiet period is slow.
+- When the monthly AI budget is used up, the demo stops answering until it is renewed.
+- Conversation history is stored per browser, not across devices.
+- The data is synthetic and small (40 projects).
 
-   In `.env`, set `OPENAI_API_KEY` and choose any `NEXAAI_ACCESS_CODE`. Then start the API:
+## Built with
 
-   ```
-   uvicorn backend.main:app --port 8000
-   ```
-
-2. **Frontend**, in a second terminal:
-
-   ```
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-3. Open http://localhost:5173 and enter the access code you set in `.env`.
-
-For developers: http://localhost:8000/docs lets you call `/health` and `/chat` directly
-(`/chat` needs the `X-Access-Code` header and streams progress events), and
-`python tests/test_backend.py` runs the backend checks without an OpenAI key.
-
-## Model
-
-The agent uses `gpt-6.1-sol` through OpenAI's Responses API, which this model needs for
-tool calling. Another model can be set with `NEXAAI_MODEL` (and
-`NEXAAI_USE_RESPONSES_API=false` for models that use Chat Completions) without code
-changes; the evaluation above applies only to `gpt-6.1-sol`. `/health` reports the model in
-use. Temperature is left at the model's default, so answers can vary between runs.
-
-## Limits and cost protection
-
-The API applies these limits, all adjustable through environment variables:
-
-| Limit | Default | Variable |
-|---|---|---|
-| Agent steps per answer | 40 | `AGENT_RECURSION_LIMIT` |
-| Time per answer | 240 s | `AGENT_TIMEOUT_SECONDS` |
-| Agent runs at the same time | 3 | `MAX_CONCURRENT_RUNS` |
-| Questions per visitor | 10 per 10 min | `RATE_LIMIT_CHATS`, `RATE_LIMIT_WINDOW_SECONDS` |
-| Wrong access codes before lockout | 5 per 10 min | `RATE_LIMIT_FAILED_CODES` |
-| Questions per server process per day | 200 (30 on Render) | `DAILY_CHAT_LIMIT` |
-
-These counters live in the server's memory. They reset whenever the server restarts, which
-on Render's free tier includes waking from sleep, so the daily limit slows abuse but is
-**not** a guaranteed daily cost ceiling. The real ceiling is on the OpenAI side: the
-deployed key belongs to a separate project with a small prepaid balance that is not
-auto-recharged, so requests stop when it runs out and the app says so. A request that hits the time limit keeps its concurrency slot until the
-agent actually stops at its next step, so timeouts cannot exceed the concurrency limit.
-
-## Deployment
-
-`render.yaml` defines the Render web service: Python 3.11.9 (pinned, because Render's
-default is newer), `/health` as the health-check path, and the three secrets
-(`OPENAI_API_KEY`, `NEXAAI_ACCESS_CODE`, `ALLOWED_ORIGINS`) entered in Render's dashboard,
-never stored in the repository. `/health` returns 503 when the database check fails, so
-Render will not route traffic to a deploy with a missing or incomplete database.
+Python, LangGraph, LangChain, OpenAI (`gpt-6.1-sol`, `text-embedding-3-small`), SQLite,
+ChromaDB, FastAPI, React and Vite; hosted on Render (API) and Vercel (web app).
