@@ -188,16 +188,14 @@ load_dotenv()
 
 # The model is configuration, not code: switch it with environment variables (in .env
 # locally, in the Render dashboard when deployed) without editing this file.
-#   NEXAAI_MODEL              model name; default gpt-5.6-sol, the model the agent was
-#                             evaluated with
-#   NEXAAI_USE_RESPONSES_API  "true" for models whose tool calling needs OpenAI's
-#                             Responses API instead of Chat Completions
-#   NEXAAI_TEMPERATURE        unset by default (the model's own default). Note: the
-#                             original temperature=0 never reached gpt-5.6-sol, because
-#                             LangChain drops non-default temperatures for gpt-5 models;
-#                             the evaluation therefore ran at the model's default too.
-MODEL_NAME = os.getenv("NEXAAI_MODEL", "gpt-5.6-sol")
-USE_RESPONSES_API = os.getenv("NEXAAI_USE_RESPONSES_API", "false").strip().lower() == "true"
+#   NEXAAI_MODEL              model name; default gpt-6.1-sol, the evaluated model
+#   NEXAAI_USE_RESPONSES_API  "true" (default) uses OpenAI's Responses API, which
+#                             gpt-6.1-sol needs for tool calling; "false" uses Chat
+#                             Completions, for models that support it
+#   NEXAAI_TEMPERATURE        unset by default (the model's own default), so answers
+#                             can vary between runs; "none" also leaves it out
+MODEL_NAME = os.getenv("NEXAAI_MODEL", "gpt-6.1-sol")
+USE_RESPONSES_API = os.getenv("NEXAAI_USE_RESPONSES_API", "true").strip().lower() == "true"
 _temperature = os.getenv("NEXAAI_TEMPERATURE", "none").strip().lower()
 
 _llm_options = {"model": MODEL_NAME, "use_responses_api": USE_RESPONSES_API}

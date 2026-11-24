@@ -12,7 +12,8 @@ question after a quiet period can take about a minute while the server wakes up.
 
 The agent loops between an LLM step and a tool step until it can answer:
 
-- **LLM:** OpenAI `gpt-5.6-sol`, temperature 0, with a 31-rule system prompt (`src/agent.py`).
+- **LLM:** OpenAI `gpt-6.1-sol` through the Responses API, with a 31-rule system prompt
+  (`src/agent.py`).
 - **13 database tools:** fixed, parameterized queries on `data/nexaai.sqlite`.
 - **`run_sql_tool`:** read-only analytical SQL on the CSV folder `data/nexaai_database`,
   loaded into in-memory SQLite (SELECT/WITH only, 200-row cap).
@@ -24,23 +25,25 @@ The two structured data sources must stay identical. Check them with
 
 ## Evaluation
 
-Results were graded by hand against the dataset; the samples are small and synthetic.
-
-**gpt-5.6-sol (the model the agent was developed and evaluated with):**
+All results below are for `gpt-6.1-sol`, run through the API. Each answer was checked
+against the database and the project documents by an AI reviewer (Claude), with every
+figure recomputed independently.
 
 - **Question bank:** 40 questions in eight categories (retrieval, multi-table,
-  cross-entity, analytical, comparative, investigative, strategic, agentic).
-- **Graded first runs:** 21 questions, 20 passed (about 95%). Every figure in the answered
-  questions matched the database; the one failure was a non-attempt, fixed on rerun.
-- **Latest batch:** 8 questions, all passed (2 with flags).
-- In a later live run through the API, Q23 failed: the same question can be answered
-  differently on different runs.
+  cross-entity, analytical, comparative, investigative, strategic, agentic). 38 were run;
+  two comparative questions (Q21, Q22) were left out of the evaluation.
+- **Result:** all 38 passed, plus a false-premise test ("Why did PRJ-014 fail?"), which the
+  agent correctly rejected with evidence: **39 of 39**. Every figure checked matched the
+  database, apart from a few that differed by 0.1 through rounding. A few answers carried minor flags (for example, a repeated search,
+  or an average that included a cancelled project without calling it out).
+- **Concurrency:** four simultaneous questions; the limit of three agent runs held, and no
+  answer used another request's data.
+- **Cost and speed:** about $0.07 per question on average; the heaviest analytical answers
+  take about two minutes.
 
-**gpt-6.1-sol (the deployed model):** one live validation run through the API, covering
-the five heaviest questions (Q23, Q25, Q36, Q37, Q38) and three simultaneous document
-questions. All 8 passed, with every figure matching the database. It was slower (heaviest
-answer 128 s versus 90 s) and cost about $0.07 per question on average. One run is
-evidence, not proof of consistency.
+Limits of this evaluation: each question was run once, and the model's answers can vary
+between runs, so a pass shows the agent can answer correctly, not that it always will. The
+data is synthetic and small.
 
 ## Setup
 
@@ -68,12 +71,11 @@ Backend checks that need no OpenAI key: `python tests/test_backend.py`.
 
 ## Model
 
-The code default is `gpt-5.6-sol`, the evaluated model; the deployment (`render.yaml`)
-uses `gpt-6.1-sol` with `NEXAAI_USE_RESPONSES_API=true`, because its tool calling needs
-OpenAI's Responses API. Any model can be set through `NEXAAI_MODEL` without code changes,
-and `/health` reports the model in use. The agent's original `temperature=0` never reached
-`gpt-5.6-sol`, because LangChain drops non-default temperatures for gpt-5 models, so
-answers can vary between runs.
+The agent uses `gpt-6.1-sol` through OpenAI's Responses API, which this model needs for
+tool calling. Another model can be set with `NEXAAI_MODEL` (and
+`NEXAAI_USE_RESPONSES_API=false` for models that use Chat Completions) without code
+changes; the evaluation above applies only to `gpt-6.1-sol`. `/health` reports the model in
+use. Temperature is left at the model's default, so answers can vary between runs.
 
 ## Limits and cost protection
 
