@@ -1,30 +1,21 @@
-import csv
-import os
 import re
 import sqlite3
 import threading
 import time
-from pathlib import Path
 
 from langchain_core.tools import tool
 
-# ---------------------------------------------------------------------------
-# Config. The data is a FOLDER OF CSV FILES: one file per table, file name = table name
-# (clients.csv -> table "clients"). This file lives in <project>/src/tools/, so parents[2]
-# is the project root (D:\NexaAI-Agent) and the default folder is
-# D:\NexaAI-Agent\data\nexaai_database. Set the NEXAAI_DATA_DIR environment variable to
-# use a different folder.
-# ---------------------------------------------------------------------------
-DEFAULT_DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "nexaai_database"
-DATA_DIR = Path(os.getenv("NEXAAI_DATA_DIR", str(DEFAULT_DATA_DIR)))
+from src.connection import DATABASE_PATH
 
+# ---------------------------------------------------------------------------
+# Data source: data/nexaai.sqlite, the same database file the other 13 database tools
+# read through src/connection.py. One source, so every tool sees the same data.
+# ---------------------------------------------------------------------------
 MAX_ROWS = 200       # rows returned to the model; the rest are reported as truncated
 TIMEOUT_SECONDS = 5  # abort runaway queries
 
 _STARTS_OK = re.compile(r"^\s*(select|with)\b", re.IGNORECASE)
 _BLOCKED = re.compile(r"\b(attach|detach|pragma|load_extension)\b", re.IGNORECASE)
-_INT = re.compile(r"^-?\d+$")
-_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 
 def _strip_sql_comments(sql: str) -> str:
@@ -33,81 +24,36 @@ def _strip_sql_comments(sql: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# CSV -> in-memory SQLite.
-# The CSV folder stays the single source of truth. It is loaded into an in-memory SQLite
-# database once, and reloaded automatically when any CSV file changes (so patched data is
-# picked up without restarting the agent). Every query runs on its own private in-memory
-# COPY, so nothing the model sends can alter the master data or affect other queries.
+# Database file -> in-memory master -> private copy per query.
+# The file is opened read-only and copied into memory once, then re-copied automatically
+# if the file changes on disk. Every query runs on its own private in-memory COPY, so
+# nothing the model sends can alter the data file or affect other queries.
 # ---------------------------------------------------------------------------
 _LOCK = threading.Lock()
 _MASTER = None
 _SIGNATURE = None
 
 
-def _csv_files():
-    files = sorted(DATA_DIR.glob("*.csv"))
-    if not files:
-        raise FileNotFoundError(f"no .csv files found in {DATA_DIR}")
-    return files
-
-
-def _column_type(values):
-    """INTEGER / REAL / TEXT, decided per column from all its non-empty values."""
-    non_empty = [v for v in values if v != ""]
-    if not non_empty:
-        return "TEXT"
-    if all(_INT.match(v) for v in non_empty):
-        return "INTEGER"
+def _load_master():
+    source = sqlite3.connect(f"file:{DATABASE_PATH.as_posix()}?mode=ro", uri=True)
     try:
-        for v in non_empty:
-            float(v)
-        return "REAL"
-    except ValueError:
-        return "TEXT"
-
-
-def _convert(value, sql_type):
-    if value == "":
-        return None  # empty CSV cell -> NULL
-    if sql_type == "INTEGER":
-        return int(value)
-    if sql_type == "REAL":
-        return float(value)
-    return value
-
-
-def _build_master(files):
-    conn = sqlite3.connect(":memory:", check_same_thread=False)
-    for path in files:
-        table = path.stem
-        if not _NAME.match(table):
-            continue
-        with open(path, newline="", encoding="utf-8-sig") as handle:
-            reader = csv.reader(handle)
-            header = next(reader)
-            rows = [(r + [""] * len(header))[: len(header)] for r in reader]
-        types = [_column_type([r[i] for r in rows]) for i in range(len(header))]
-        columns = ", ".join(f'"{name}" {sql_type}' for name, sql_type in zip(header, types))
-        conn.execute(f'CREATE TABLE "{table}" ({columns})')
-        placeholders = ", ".join("?" * len(header))
-        conn.executemany(
-            f'INSERT INTO "{table}" VALUES ({placeholders})',
-            [[_convert(v, t) for v, t in zip(row, types)] for row in rows],
-        )
-    conn.commit()
-    return conn
+        master = sqlite3.connect(":memory:", check_same_thread=False)
+        source.backup(master)
+    finally:
+        source.close()
+    return master
 
 
 def _snapshot_connection():
-    """Return a private in-memory copy of the data (rebuilding the master if CSVs changed)."""
+    """Return a private in-memory copy of the database (reloading it if the file changed)."""
     global _MASTER, _SIGNATURE
     with _LOCK:
-        files = _csv_files()
-        signature = tuple((f.name, f.stat().st_mtime_ns, f.stat().st_size) for f in files)
+        stat = DATABASE_PATH.stat()
+        signature = (stat.st_mtime_ns, stat.st_size)
         if _MASTER is None or signature != _SIGNATURE:
             if _MASTER is not None:
                 _MASTER.close()
-            _MASTER = _build_master(files)
+            _MASTER = _load_master()
             _SIGNATURE = signature
         copy = sqlite3.connect(":memory:")
         _MASTER.backup(copy)
@@ -116,7 +62,7 @@ def _snapshot_connection():
 
 @tool
 def run_sql_tool(query: str):
-    """Run ONE read-only SQL query (SQLite) on the NexaAI database (loaded from CSV files) and get exact rows back.
+    """Run ONE read-only SQL query (SQLite) on the NexaAI database and get exact rows back.
     USE THIS for anything that needs counting, summing, averaging, ranking, grouping,
     filtering or joining across several projects / clients / employees / risks (e.g. "which
     risk category is most common", "average score by industry", "projects per strategy").
@@ -217,8 +163,8 @@ def run_sql_tool(query: str):
     try:
         # Private in-memory copy per call: safe under parallel tool calls.
         conn = _snapshot_connection()
-    except (OSError, ValueError, StopIteration, sqlite3.Error) as exc:
-        return f"SQL ERROR: cannot load the data files from {DATA_DIR} ({exc})."
+    except (OSError, sqlite3.Error) as exc:
+        return f"SQL ERROR: cannot open the database file {DATABASE_PATH.name} ({exc})."
 
     try:
         conn.execute("PRAGMA query_only = ON")

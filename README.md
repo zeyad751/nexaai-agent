@@ -15,13 +15,28 @@ The agent loops between an LLM step and a tool step until it can answer:
 - **LLM:** OpenAI `gpt-6.1-sol` through the Responses API, with a 31-rule system prompt
   (`src/agent.py`).
 - **13 database tools:** fixed, parameterized queries on `data/nexaai.sqlite`.
-- **`run_sql_tool`:** read-only analytical SQL on the CSV folder `data/nexaai_database`,
-  loaded into in-memory SQLite (SELECT/WITH only, 200-row cap).
+- **`run_sql_tool`:** read-only analytical SQL on the same `data/nexaai.sqlite`. Each query
+  runs on a private in-memory copy of the database, so it can never change the data file
+  (SELECT/WITH only, 5-second timeout, 200-row cap).
 - **`search_documents_tool`:** semantic search over the 150 documents in a Chroma index
   (`data/vector_db`), embedded with OpenAI `text-embedding-3-small`.
 
-The two structured data sources must stay identical. Check them with
-`python -m scripts.check_data_consistency`.
+### Data
+
+`data/nexaai.sqlite` is the single source of structured data: 12 tables covering projects,
+clients, employees, departments, project teams, KPIs, risks, milestones, decisions,
+strategies and technologies. Every database tool and the SQL tool read this one file, so
+they always see the same data. To change the data, edit this file; the SQL tool picks up the
+change automatically.
+
+The server checks the database at startup: the file must open and all 12 tables must exist
+and contain rows. If the check fails, `/health` reports `degraded` (HTTP 503) and the
+hosting platform keeps serving the previous working version. The same check runs locally
+with `python -m scripts.check_database`.
+
+The narrative documents live in `data/documents` and are searched through the Chroma
+index in `data/vector_db`. After changing documents, rebuild the index with
+`python build_vector.py` (this calls the OpenAI embeddings API).
 
 ## Evaluation
 
@@ -102,5 +117,5 @@ agent actually stops at its next step, so timeouts cannot exceed the concurrency
 `render.yaml` defines the Render web service: Python 3.11.9 (pinned, because Render's
 default is newer), `/health` as the health-check path, and the three secrets
 (`OPENAI_API_KEY`, `NEXAAI_ACCESS_CODE`, `ALLOWED_ORIGINS`) entered in Render's dashboard,
-never stored in the repository. `/health` returns 503 when the two data sources disagree,
-so Render will not route traffic to a deploy with inconsistent data.
+never stored in the repository. `/health` returns 503 when the database check fails, so
+Render will not route traffic to a deploy with a missing or incomplete database.

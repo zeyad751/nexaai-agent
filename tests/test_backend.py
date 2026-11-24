@@ -39,7 +39,7 @@ H = {"X-Access-Code": "demo-code-123"}
 def ipH(ip, code="demo-code-123"): return {"X-Access-Code": code, "X-Forwarded-For": ip}
 
 with TestClient(m.app) as c:
-    r = c.get("/health"); check("health ok + data consistent + 15 tools", r.status_code==200 and r.json()=={"status":"ok","data_consistent":True,"agent_tools":15,"model":m.MODEL_NAME}, r.text)
+    r = c.get("/health"); check("health ok + database ok + 15 tools", r.status_code==200 and r.json()=={"status":"ok","database_ok":True,"agent_tools":15,"model":m.MODEL_NAME}, r.text)
 
     r = c.post("/chat", json={"message":"hi"}, headers={"X-Forwarded-For":"1.1.1.1"})
     check("missing code -> 401", r.status_code==401 and r.json()["detail"]["code"]=="invalid_access_code", r.text)
@@ -149,12 +149,12 @@ with TestClient(m.app) as c:
 m._run_slots = threading.BoundedSemaphore(orig.max_concurrent_runs)
 
 # /health must report unhealthy when the data sources disagree.
-real_check = m.check_data_consistency
-m.check_data_consistency = lambda: ["clients: 1 row(s) only in nexaai.sqlite, 1 row(s) only in the CSVs"]
+real_check = m.check_database
+m.check_database = lambda: ["table 'clients' is missing"]
 with TestClient(m.app) as c:
     r = c.get("/health")
-    check("inconsistent data -> /health 503 degraded", r.status_code==503 and r.json()["status"]=="degraded" and r.json()["data_consistent"] is False, r.text)
-m.check_data_consistency = real_check
+    check("broken database -> /health 503 degraded", r.status_code==503 and r.json()["status"]=="degraded" and r.json()["database_ok"] is False, r.text)
+m.check_database = real_check
 
 print(f"\n{sum(results)}/{len(results)} checks passed in total")
 

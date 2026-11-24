@@ -28,7 +28,7 @@ from langgraph.errors import GraphRecursionError
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from backend.config import settings
-from scripts.check_data_consistency import check as check_data_consistency
+from scripts.check_database import check as check_database
 from src.agent import MODEL_NAME, graph, tools
 
 log = logging.getLogger("nexaai.api")
@@ -36,19 +36,19 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 
 
 # ---------------------------------------------------------------------------
-# Startup: verify the data before accepting traffic
+# Startup: verify the database before accepting traffic
 # ---------------------------------------------------------------------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    problems = check_data_consistency()
-    app.state.data_consistent = not problems
+    problems = check_database()
+    app.state.database_ok = not problems
     for problem in problems:
-        log.error("Data inconsistency: %s", problem)
+        log.error("Database problem: %s", problem)
     if not settings.access_code:
         log.error("NEXAAI_ACCESS_CODE is not set: /chat will refuse every request.")
     if not settings.openai_key_present:
         log.error("OPENAI_API_KEY is not set: the agent cannot run.")
-    log.info("Agent loaded with %d tools, model %s; data consistent: %s",
+    log.info("Agent loaded with %d tools, model %s; database OK: %s",
              len(tools), MODEL_NAME, not problems)
     yield
 
@@ -232,8 +232,8 @@ def _friendly(exc: Exception) -> tuple[str, str]:
 # ---------------------------------------------------------------------------
 @app.get("/health")
 def health(request: Request):
-    ok = bool(getattr(request.app.state, "data_consistent", False))
-    body = {"status": "ok" if ok else "degraded", "data_consistent": ok,
+    ok = bool(getattr(request.app.state, "database_ok", False))
+    body = {"status": "ok" if ok else "degraded", "database_ok": ok,
             "agent_tools": len(tools), "model": MODEL_NAME}
     return JSONResponse(status_code=200 if ok else 503, content=body)
 

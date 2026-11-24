@@ -7,6 +7,7 @@ Then, in a second terminal (venv active, project root):
     python tests/validate_live.py              # both parts
     python tests/validate_live.py sequential   # only the multi-step questions
     python tests/validate_live.py concurrency  # only the simultaneous requests
+    python tests/validate_live.py regression   # questions not yet run on the current model
 
 Every event of every run is saved under validation_results/ for review.
 """
@@ -41,6 +42,30 @@ SEQUENTIAL = {
            "strongly associate with schedule delay, budget overrun, and low adoption "
            "respectively, and which mitigation approaches actually worked when a risk was "
            "Realized rather than Mitigated?",
+}
+
+# Questions from the evaluation bank not yet answered by the current model through the API
+# (the earlier regression set has been run). Run one at a time.
+REGRESSION = {
+    "Q01": "What is Project PRJ-001's (Fraud Detection AI Platform) budget and actual cost?",
+    "Q03": "What industry is client CLI-13 (Sahara Power & Energy) in?",
+    "Q04": "Who is the department head of DEPT-01 (AI Engineering)?",
+    "Q05": "What strategy was used for PRJ-009 (Enterprise Clinical AI Rollout)?",
+    "Q06": "Which employees worked on PRJ-001, and what were their roles and allocation "
+           "percentages?",
+    "Q07": "What technologies were used on PRJ-024?",
+    "Q08": "What are all the risks and their statuses for PRJ-021?",
+    "Q09": "Which milestones on PRJ-003 were completed late?",
+    "Q10": "What is the full KPI trend (every reporting period) for PRJ-009?",
+    "Q11": "Which Finance department employees worked on projects for Banking clients?",
+    "Q12": "Which Director-level Data & Analytics employees have worked on "
+           "High-strategic-importance projects, and which ones?",
+    "Q14": "Which Sales (DEPT-08) employees are account managers for High-strategic-priority "
+           "clients?",
+    "Q17": "What is the average customer_satisfaction score by project_type?",
+    "Q30": "Why has NexaAI kept the Ministry of Digital Development (CLI-17) account as a high "
+           "strategic priority despite declining per-project revenue over the relationship?",
+    "Q39": "Does a client called \"Orion\" appear anywhere in NexaAI's project history?",
 }
 
 # Four questions sent at the same moment. Each is about a different project and needs
@@ -104,9 +129,9 @@ def summary(result: dict) -> str:
     return f"answered in {result['seconds']} s, {steps} steps, {failed} failed tool calls"
 
 
-def run_sequential():
-    print("\n=== Part 1: multi-step questions (one at a time) ===")
-    for qid, question in SEQUENTIAL.items():
+def run_sequential(questions=None, title="Part 1: multi-step questions (one at a time)"):
+    print(f"\n=== {title} ===")
+    for qid, question in (questions or SEQUENTIAL).items():
         print(f"{qid} ...", end=" ", flush=True)
         result = ask(question)
         save(qid, question, result)
@@ -172,4 +197,6 @@ if __name__ == "__main__":
         run_sequential()
     if part in ("all", "concurrency"):
         run_concurrency()
+    if part == "regression":
+        run_sequential(REGRESSION, "Regression: questions not yet run on this model")
     print(f"\nTraces saved in {OUT.resolve()}")
