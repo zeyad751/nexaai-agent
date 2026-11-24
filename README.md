@@ -60,29 +60,39 @@ Limits of this evaluation: each question was run once, and the model's answers c
 between runs, so a pass shows the agent can answer correctly, not that it always will. The
 data is synthetic and small.
 
-## Setup
+## Run it locally
 
-Requires Python 3.11.
+The easiest way to try NexaAI-Agent is the live demo above. To run it yourself, you need
+Python 3.11, Node.js 20 or newer, and your own OpenAI API key.
 
-```
-python -m venv .venv
-.venv\Scripts\activate          # Windows; on macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-copy .env.example .env          # then put your OpenAI key in .env
-python test_agent.py
-```
+1. **Backend**
 
-## Running the API
+   ```
+   python -m venv .venv
+   .venv\Scripts\activate            # macOS/Linux: source .venv/bin/activate
+   pip install -r requirements.txt
+   copy .env.example .env            # macOS/Linux: cp .env.example .env
+   ```
 
-```
-uvicorn backend.main:app --reload --port 8000
-```
+   In `.env`, set `OPENAI_API_KEY` and choose any `NEXAAI_ACCESS_CODE`. Then start the API:
 
-Then open http://localhost:8000/docs to try `/health` and `/chat`. `/chat` needs the
-`X-Access-Code` header to match `NEXAAI_ACCESS_CODE` in `.env`, and streams progress
-events (`start`, `tool_calls`, `tool_result`, `answer`, `done`, or `error`).
+   ```
+   uvicorn backend.main:app --port 8000
+   ```
 
-Backend checks that need no OpenAI key: `python tests/test_backend.py`.
+2. **Frontend**, in a second terminal:
+
+   ```
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+3. Open http://localhost:5173 and enter the access code you set in `.env`.
+
+For developers: http://localhost:8000/docs lets you call `/health` and `/chat` directly
+(`/chat` needs the `X-Access-Code` header and streams progress events), and
+`python tests/test_backend.py` runs the backend checks without an OpenAI key.
 
 ## Model
 
