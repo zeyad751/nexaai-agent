@@ -29,15 +29,6 @@ strategies and technologies. Every database tool and the SQL tool read this one 
 they always see the same data. To change the data, edit this file; the SQL tool picks up the
 change automatically.
 
-The server checks the database at startup: the file must open and all 12 tables must exist
-and contain rows. If the check fails, `/health` reports `degraded` (HTTP 503) and the
-hosting platform keeps serving the previous working version. The same check runs locally
-with `python -m scripts.check_database`.
-
-The narrative documents live in `data/documents` and are searched through the Chroma
-index in `data/vector_db`. After changing documents, rebuild the index with
-`python build_vector.py` (this calls the OpenAI embeddings API).
-
 ## Evaluation
 
 All results below are for `gpt-6.1-sol`, run through the API. Each answer was checked
