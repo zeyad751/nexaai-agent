@@ -4,6 +4,10 @@ A LangGraph agent that answers business-intelligence questions about NexaAI Solu
 synthetic AI consultancy (40 projects, 20 clients, 100 employees, 60 risks, KPIs, milestones,
 decisions and 150 narrative documents).
 
+**Live demo:** [nexaai-agent.vercel.app](https://nexaai-agent.vercel.app/) (access by invitation:
+the site asks for an access code). The backend runs on Render's free plan, so the first
+question after a quiet period can take about a minute while the server wakes up.
+
 ## How it works
 
 The agent loops between an LLM step and a tool step until it can answer:
